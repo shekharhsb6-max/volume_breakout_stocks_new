@@ -75,6 +75,22 @@
   @keyframes rise{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 
   .card .left .symbol{ font-size:1.02rem; font-weight:700; color:var(--text); }
+  .card .left .tag{
+    font-size:0.6rem; font-weight:600; color:var(--gold-soft);
+    border:1px solid var(--border); border-radius:999px; padding:2px 7px;
+    margin-left:6px; vertical-align:middle;
+  }
+  .rating{
+    font-size:0.62rem; font-weight:700; border-radius:999px;
+    padding:3px 9px; display:inline-block; margin-top:6px; letter-spacing:0.02em;
+  }
+  .rating-strongbuy{ background:rgba(95,211,141,0.18); color:var(--up); }
+  .rating-watchlist{ background:rgba(212,175,55,0.18); color:var(--gold-soft); }
+  .rating-earlybreakout{ background:rgba(95,211,141,0.14); color:#9be8b8; }
+  .rating-overheated{ background:rgba(226,104,95,0.14); color:#f0a79f; }
+  .rating-valuezone{ background:rgba(212,175,55,0.14); color:var(--gold-soft); }
+  .rating-fallingknife{ background:rgba(226,104,95,0.2); color:var(--down); }
+  .rating-avoid{ background:rgba(159,179,166,0.15); color:var(--text-dim); }
   .card .left .dmas{ font-size:0.68rem; color:var(--text-dim); margin-top:3px; }
   .card .right{ text-align:right; }
   .card .right .price{ font-size:1.02rem; font-weight:700; color:var(--up); }
@@ -120,7 +136,7 @@
 
 <script>
   // ⚠️ Fill these in after you deploy the Apps Script Web App.
-  const API_URL = "https://script.googleusercontent.com/macros/echo?user_content_key=AUkAhnTs-AAEsUamalQNwluW98zwdnGWYwTmPBRfnwYpxRUW8F5VE7F2jew6eQnsUXYWNneivgKkt18WtdWG2LxqThp8Z0w_nNyvOeC8qrJSXA4CxvblFD6QSx1odDb7cIjXQAdRMQ7T_Lzvby-cHqU0QR2AITITV-WpR__aQvpCfCIghliRWrV7nlAVquUU9stBeJA76_Bj-gh8Ezmd9k5ar6rEDye5C-_tRNdaMeh3_BLXx2ox1GU4-bi43S_P3qtO3DqrQ1_b1i4-Rio-Lj4WTQ-RDvJ9wiOYRLkaBdvraSbeUOx1FPs4BDdQMMHDvQ&lib=MGy1ksWRQqGgQt-psW1rw6XnJate8XYSN"; // ends in /exec
+  const API_URL = "https://script.google.com/macros/s/AKfycbhttps://script.google.com/macros/s/AKfycbxAY-qPSte2nAIqVz6Hf8MSyRHfMcRsMCMpb02Gmpnos8ZuD2vwvewWoBm3YlNPOhcmDA/execz-qSy09P53ZbvVKmUfMtQdISstMi_UrhaiGkX-6YUhaxWRTWAAADT_JGc0zI3aco3KXA/exec?key=himadri-nse-8k3f2m9x"; // ends in /exec
   const API_KEY = "himadri-nse-8k3f2m9x"; // must match Code.gs
 
   const contentEl = document.getElementById("content");
@@ -152,16 +168,19 @@
         return;
       }
 
-      const pill = `<div class="count-pill">${data.count} breakout stocks</div>`;
+      const pill = `<div class="count-pill">${data.count} stocks · Bull Run + Buy/Average Out</div>`;
+      const ratingClass = (r) => "rating-" + String(r || "").toLowerCase().replace(/[^a-z]/g, "");
       const cards = data.stocks.map(s => `
         <div class="card">
           <div class="left">
             <div class="symbol">${s.symbol}</div>
-            <div class="dmas">50D ${fmtNum(s.dma50)} · 100D ${fmtNum(s.dma100)} · 200D ${fmtNum(s.dma200)}</div>
+            <div class="dmas">Prev Close ₹${fmtNum(s.prevClose)} · Diff from 200D: ${fmtNum(s.diff200)}%</div>
+            <div class="dmas">${s.signal || ""}</div>
+            <div class="rating ${ratingClass(s.rating)}">${s.rating || ""}</div>
           </div>
           <div class="right">
-            <div class="price">₹${fmtNum(s.close)}</div>
-            <div class="vol">Vol ${fmtNum(s.volume)}</div>
+            <div class="price">₹${fmtNum(s.cmp)}</div>
+            <div class="vol">Turnover ${fmtNum(s.turnover)}</div>
           </div>
         </div>
       `).join("");
